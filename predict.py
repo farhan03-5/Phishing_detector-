@@ -2,15 +2,27 @@ import pickle
 import os
 from text_preprocess import clean_text
 
-# ✅ FIXED PATH (WORKS IN DEPLOY)
+# ✅ Get current directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# ✅ Correct paths
 model_path = os.path.join(BASE_DIR, "model", "phishing_model.pkl")
 vectorizer_path = os.path.join(BASE_DIR, "model", "vectorizer.pkl")
 
-# ✅ LOAD FILES SAFELY
-model = pickle.load(open(model_path, "rb"))
-vectorizer = pickle.load(open(vectorizer_path, "rb"))
+# 🔥 DEBUG (will show in logs)
+print("Model path:", model_path)
+print("Exists:", os.path.exists(model_path))
+
+# ❌ If file missing → stop app with clear error
+if not os.path.exists(model_path):
+    raise FileNotFoundError(f"❌ Model not found at {model_path}")
+
+# ✅ Load model
+with open(model_path, "rb") as f:
+    model = pickle.load(f)
+
+with open(vectorizer_path, "rb") as f:
+    vectorizer = pickle.load(f)
 
 
 def predict_email(text):
